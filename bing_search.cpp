@@ -265,7 +265,7 @@ string bing_search::web_url(int result_index_number)
 
 	cJSON * root = cJSON_Parse(json_txt.memory);
 	cJSON * webpages = cJSON_GetObjectItem(root,"webPages");
-	cJSON * value = cJSON_GetObjectItem(root,"value");
+	cJSON * value = cJSON_GetObjectItem(webpages,"value");
 	cJSON * result = cJSON_GetArrayItem(value, result_index_number);
 	cJSON * json_url = cJSON_GetObjectItem(result, "url");
 
@@ -297,7 +297,7 @@ string bing_search::web_title(int result_index_number)
 
 	cJSON * root = cJSON_Parse(json_txt.memory);
 	cJSON * webpages = cJSON_GetObjectItem(root,"webPages");
-	cJSON * value = cJSON_GetObjectItem(root,"value");
+	cJSON * value = cJSON_GetObjectItem(webpages,"value");
 	cJSON * result = cJSON_GetArrayItem(value, result_index_number);
 	cJSON * json_url = cJSON_GetObjectItem(result, "name");
 
