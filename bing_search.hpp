@@ -29,8 +29,12 @@ public:
 	bing_search();
 	int set_key(std::string api_key);
 	int image_search(std::string keywords);
-	std::string result_format(int result_index_number);
-	std::string *result_url(int result_index_number);
+	std::string image_format(int result_index_number);
+	std::string image_url(int result_index_number);
+	int web_search(std::string keywords);
+	std::string web_url(int result_index_number);
+	std::string web_title(int result_index_number);
+	std::string web_snippet(int result_index_number);
 
 
 private:
