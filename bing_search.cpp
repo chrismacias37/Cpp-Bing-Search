@@ -181,7 +181,7 @@ string bing_search::image_format(int result_index_number)
 int bing_search::web_search(std::string keywords)
 {
 	std::string URL;
-	const std::string domain = "https://api.cognitive.microsoft.com/bing/v5.0/search";
+	const std::string domain = "https://api.cognitive.microsoft.com/bing/v5.0/search?q=";
 	const std::string market = "&mkt=en-us";
 	std::string query;
 
@@ -329,7 +329,7 @@ string bing_search::web_snippet(int result_index_number)
 
 	cJSON * root = cJSON_Parse(json_txt.memory);
 	cJSON * webpages = cJSON_GetObjectItem(root,"webPages");
-	cJSON * value = cJSON_GetObjectItem(root,"value");
+	cJSON * value = cJSON_GetObjectItem(webpages,"value");
 	cJSON * result = cJSON_GetArrayItem(value, result_index_number);
 	cJSON * json_url = cJSON_GetObjectItem(result, "snippet");
 
