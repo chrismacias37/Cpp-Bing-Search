@@ -371,4 +371,3 @@ size_t bing_search::WriteMemoryCallback(void *contents, size_t size, size_t nmem
 
   return realsize;
 }
-

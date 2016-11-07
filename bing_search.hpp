@@ -51,6 +51,4 @@ private:
 
 };
 
-
-
 #endif /* BING_SEARCH_HPP_ */
