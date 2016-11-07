@@ -34,13 +34,17 @@ int bing_search::set_key(std::string api_key_INPUT)
 		api_key.assign(api_key_INPUT);
 	}
 	else
-	{/*
-		Currently this case will create a bug because it will not erase the old header information and send two keys
-	 */
+	{
 		api_key.clear();
 		api_key.assign(api_key_INPUT);
 
-		return -1; //until this problem is corrected
+		//Reset entire header info
+		curl_slist_free_all(headers);
+		headers=NULL;
+		headers = curl_slist_append(headers, USER_AGENT);
+		if (headers == NULL)//check if it did allocate header
+		   return -1;
+		headers = curl_slist_append(headers, "Host: api.cognitive.microsoft.com");
 	}
 
 	key_header.append(api_key);
@@ -67,6 +71,8 @@ int bing_search::image_search(std::string keywords)
 	json_txt.memory=(char *)malloc(1);
 	json_txt.size = 0;
 
+	char *c_keywords = (char *) keywords.c_str();
+
 	if(json_txt.memory==NULL)
 	{
 		cerr<<"\nImage_search:"
@@ -75,14 +81,20 @@ int bing_search::image_search(std::string keywords)
 		return -1;
 	}
 
-	char *c_keywords = (char *) keywords.c_str();
-
-	if(api_key.empty() == 1)
+	else if(api_key.empty())
 	{
 		std::cout<<"\nImage_search: "
 				"\n please enter your bing API key before attempting to search";
 		return -1;
 	}
+	else if(c_keywords==NULL)
+	{
+
+		std::cout<<"\nImage_search: "
+				"\n Error while checking keywords.";
+		return -1;
+	}
+
 
 	URL.assign(domain);
 
@@ -110,7 +122,7 @@ int bing_search::image_search(std::string keywords)
 
 	}
 
-	if(json_txt.size==0)
+	else if(json_txt.size==0)
 	{
 		cerr<<"\nImage_search:"
 				"\n no response from image search "
@@ -144,8 +156,8 @@ string bing_search::image_url(int result_index_number)
 	{
 		cerr<<"\nImage_url:"
 				"\n no data received from search result"
-				"\n no URL";
-		return URL_result;
+				"\n ensure you performed an image search";
+		return URL_result;//return blank string
 	}
 	URL_result.assign(cJSON_Print(json_url));
 	URL_result.erase(URL_result.begin());//Remove quotes
@@ -168,8 +180,8 @@ string bing_search::image_format(int result_index_number)
 	{
 		std::cout<<"\nImage_format"
 				"\n no data recieved from search result"
-				"\n format Unknown\n";
-		return "NO FMT";
+				"\n make sure you have performed an image search";
+		return format_result;
 	}
 	format_result.assign(cJSON_Print(json_url));
 	format_result.erase(format_result.begin());//Remove quotes
@@ -195,6 +207,8 @@ int bing_search::web_search(std::string keywords)
 	json_txt.memory=(char *)malloc(1);
 	json_txt.size = 0;
 
+	char *c_keywords = (char *) keywords.c_str();
+
 	if(json_txt.memory==NULL)
 	{
 		cerr<<"\nWeb_search:"
@@ -202,10 +216,7 @@ int bing_search::web_search(std::string keywords)
 				"\n no memory available";
 		return -1;
 	}
-
-	char *c_keywords = (char *) keywords.c_str();
-
-	if(api_key.empty() == 1)
+	else if(api_key.empty() == 1)
 	{
 		std::cout<<"\nWeb_search: "
 				"\n please enter your bing API key before attempting to search";
@@ -237,8 +248,7 @@ int bing_search::web_search(std::string keywords)
 		  return -1;
 
 	}
-
-	if(json_txt.size==0)
+	else if(json_txt.size==0)
 	{
 		cerr<<"\nWeb_search:"
 				"\n no response from web search "
@@ -273,7 +283,7 @@ string bing_search::web_url(int result_index_number)
 	{
 		cerr<<"\nWeb_url:"
 				"\n no data received from search result"
-				"\n no URL";
+				"\n make sure you have performed a web search";
 		return URL_result;
 	}
 	URL_result.assign(cJSON_Print(json_url));
@@ -305,7 +315,7 @@ string bing_search::web_title(int result_index_number)
 	{
 		cerr<<"\nWeb_title:"
 				"\n no data received from search result"
-				"\n no URL";
+				"\n make sure you have performed a web search";
 		return URL_result;
 	}
 	URL_result.assign(cJSON_Print(json_url));
